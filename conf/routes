@@ -1,0 +1,8 @@
+POST    /processors       controller.ProcessorController.add
+GET     /processors/:id    controller.ProcessorController.get(id: Long)
+GET     /processors       controller.ProcessorController.getAll
+DELETE  /processors/:id    controller.ProcessorController.delete(id: Long)
+PUT     /processors/:id    controller.ProcessorController.update(id: Long)
+
+
+      
