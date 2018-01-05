@@ -1,10 +1,12 @@
 package service
 
+import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 import dto.{GetProcessor, PostProcessor}
 import repository.ProcessorRepository
 
-class ProcessorService(val processorRepository: ProcessorRepository)(implicit val executionContext: ExecutionContext) {
+class ProcessorService @Inject()(processorRepository: ProcessorRepository)(implicit executionContext: ExecutionContext) {
 
 
   def getAll: Future[Seq[GetProcessor]] = {

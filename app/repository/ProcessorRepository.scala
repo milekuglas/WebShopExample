@@ -1,13 +1,21 @@
 package repository
 
 import slick.jdbc.PostgresProfile.api._
-import scala.concurrent.Future
 import model.Processor
+import javax.inject.{ Inject, Singleton }
 
-class ProcessorRepository(db: Database) {
+import play.api.db.slick.{ DatabaseConfigProvider, HasDatabaseConfigProvider }
+import slick.jdbc.JdbcProfile
 
-  lazy val Processors = TableQuery[ProcessorTable]
-  lazy val Products = TableQuery[ProductTable]
+import scala.concurrent.{ ExecutionContext, Future }
+
+@Singleton()
+class ProcessorRepository @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
+                                    (implicit executionContext: ExecutionContext) extends ProductComponent
+  with HasDatabaseConfigProvider[JdbcProfile] {
+
+  private val Processors = TableQuery[ProcessorTable]
+  private val Products = TableQuery[ProductTable]
 
   private[ProcessorRepository] class ProcessorTable(tag: Tag)
     extends Table[Processor](tag, "PROCESSORS") {
@@ -32,6 +40,9 @@ class ProcessorRepository(db: Database) {
   def get(id: Long): Future[Option[Processor]] = db.run(Processors.filter(_.productId === id).result.headOption)
 
   def insert(processor: Processor): Future[Processor] = db.run((Processors returning Processors) += processor)
+
+  def insert(processors: Seq[Processor]): Future[Unit] =
+    db.run(Processors ++= processors).map(_ => ())
 
   def delete(id: Long): Future[Int] = db.run(Processors.filter(_.productId === id).delete)
 

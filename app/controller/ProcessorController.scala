@@ -1,5 +1,7 @@
 package controller
 
+import javax.inject.Inject
+
 import dto.PostProcessor
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, Action, ControllerComponents}
@@ -7,8 +9,8 @@ import service.ProcessorService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class ProcessorController(val cc: ControllerComponents, val processorService: ProcessorService)
-                    (implicit val executionContext: ExecutionContext)
+class ProcessorController @Inject()(cc: ControllerComponents, processorService: ProcessorService)
+                    (implicit executionContext: ExecutionContext)
   extends AbstractController(cc) {
 
 

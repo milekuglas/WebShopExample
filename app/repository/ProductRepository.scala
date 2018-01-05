@@ -1,27 +1,34 @@
 package repository
 
 import slick.jdbc.PostgresProfile.api._
-import scala.concurrent.Future
+import scala.concurrent.{ Future, ExecutionContext}
 import model.Product
+import play.api.db.slick.{ DatabaseConfigProvider, HasDatabaseConfigProvider }
+import slick.jdbc.JdbcProfile
+import javax.inject.{ Inject, Singleton }
 
-class ProductTable(tag: Tag)
-  extends Table[Product](tag, "PRODUCTS") {
+trait ProductComponent { self: HasDatabaseConfigProvider[JdbcProfile] =>
+  class ProductTable(tag: Tag)
+    extends Table[Product](tag, "PRODUCTS") {
 
-  def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
-  def name = column[String]("name")
-  def manufacturer = column[String]("manufacturer")
-  def price = column[Double]("price")
-  def description = column[String]("description")
-  def productURl = column[String]("productURl")
-  def quantity = column[Int]("quantity")
+    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+    def name = column[String]("name")
+    def manufacturer = column[String]("manufacturer")
+    def price = column[Double]("price")
+    def description = column[String]("description")
+    def productURl = column[String]("productURl")
+    def quantity = column[Int]("quantity")
 
-  def * = (id, name, manufacturer,price, description, productURl, quantity) <> (Product.tupled, Product.unapply)
-
+    def * = (id, name, manufacturer,price, description, productURl, quantity) <> (Product.tupled, Product.unapply)
+  }
 }
 
-class ProductRepository(db: Database) {
+@Singleton()
+class ProductRepository @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)
+  extends ProductComponent
+    with HasDatabaseConfigProvider[JdbcProfile] {
 
-  lazy val Products = TableQuery[ProductTable]
+  val Products = TableQuery[ProductTable]
 
   def all(): Future[Seq[Product]] = db.run(Products.result)
 
@@ -29,10 +36,15 @@ class ProductRepository(db: Database) {
 
   def insert(processor: Product): Future[Product] = db.run((Products returning Products) += processor)
 
+  def insert(products: Seq[Product]): Future[Unit] =
+    db.run(Products ++= products).map(_ => ())
+
   def delete(id: Long): Future[Int] = db.run(Products.filter(_.id === id).delete)
 
   def update(id: Long, processor: Product): Future[Int] = db.run(Products.filter(_.id === id).update(processor.copy(id)))
 
   def create() = db.run(Products.schema.create)
+
+  def count(): Future[Int] = db.run(Products.length.result)
 
 }
