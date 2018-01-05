@@ -1,11 +1,12 @@
 package service
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
 import scala.concurrent.{ExecutionContext, Future}
 import dto.{GetProcessor, PostProcessor}
 import repository.ProcessorRepository
 
+@Singleton()
 class ProcessorService @Inject()(processorRepository: ProcessorRepository)(implicit executionContext: ExecutionContext) {
 
 

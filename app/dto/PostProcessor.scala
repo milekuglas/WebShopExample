@@ -1,7 +1,6 @@
 package dto
 
 import play.api.libs.json._
-import play.api.libs.functional.syntax._
 import model.Processor
 
 
@@ -18,16 +17,7 @@ case class PostProcessor(
 
 object PostProcessor {
 
-  implicit val processorReads: Reads[PostProcessor] = (
-    (JsPath \ "productId").read[Long] and
-      (JsPath \ "socket").read[String] and
-      (JsPath \ "processorType").read[String] and
-      (JsPath \ "cores").read[Int] and
-      (JsPath \ "cache").read[Int] and
-      (JsPath \ "thread").read[Int] and
-      (JsPath \ "baseFrequency").read[Double] and
-      (JsPath \ "turboFrequency").read[Double]
-    )(PostProcessor.apply _)
+  implicit val processorReads = Json.reads[PostProcessor]
 
   implicit def postProcessorToProcessor(newProcessor: PostProcessor): Processor =
     new Processor(

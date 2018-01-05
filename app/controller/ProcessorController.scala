@@ -1,6 +1,6 @@
 package controller
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
 import dto.PostProcessor
 import play.api.libs.json._
@@ -9,6 +9,7 @@ import service.ProcessorService
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton()
 class ProcessorController @Inject()(cc: ControllerComponents, processorService: ProcessorService)
                     (implicit executionContext: ExecutionContext)
   extends AbstractController(cc) {
