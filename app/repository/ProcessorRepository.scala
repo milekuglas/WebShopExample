@@ -7,16 +7,12 @@ import model.Processor
 class ProcessorRepository(db: Database) {
 
   lazy val Processors = TableQuery[ProcessorTable]
+  lazy val Products = TableQuery[ProductTable]
 
-  private[ProcessorRepository] class ProcessorTable(tag: Tag) extends Table[Processor](tag, "PROCESSORS") {
+  private[ProcessorRepository] class ProcessorTable(tag: Tag)
+    extends Table[Processor](tag, "PROCESSORS") {
 
-    def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
-    def name = column[String]("name")
-    def manufacturer = column[String]("manufacturer")
-    def price = column[Double]("price")
-    def description = column[String]("description")
-    def productURl = column[String]("productURl")
-    def quantity = column[Int]("quantity")
+    def productId = column[Long]("product_id")
     def socket = column[String]("socket")
     def processorType = column[String]("processorType")
     def cores = column[Int]("cores")
@@ -25,20 +21,21 @@ class ProcessorRepository(db: Database) {
     def baseFrequency = column[Double]("baseFrequency")
     def turboFrequency = column[Double]("turboFrequency")
 
-    def * = (id, name, manufacturer,price, description, productURl, quantity, socket,
-    processorType, cores, cache, thread, baseFrequency, turboFrequency) <> ((Processor.apply _)tupled, Processor.unapply _)
+    def product = foreignKey("product_FK", productId, Products)(_.id)
+
+    def * = (productId, socket, processorType, cores, cache, thread, baseFrequency, turboFrequency) <> (Processor.tupled, Processor.unapply)
 
   }
 
   def all(): Future[Seq[Processor]] = db.run(Processors.result)
 
-  def get(id: Long): Future[Option[Processor]] = db.run(Processors.filter(_.id === id).result.headOption)
+  def get(id: Long): Future[Option[Processor]] = db.run(Processors.filter(_.productId === id).result.headOption)
 
   def insert(processor: Processor): Future[Processor] = db.run((Processors returning Processors) += processor)
 
-  def delete(id: Long): Future[Int] = db.run(Processors.filter(_.id === id).delete)
+  def delete(id: Long): Future[Int] = db.run(Processors.filter(_.productId === id).delete)
 
-  def update(id: Long, processor: Processor): Future[Int] = db.run(Processors.filter(_.id === id).update(processor.copy(id)))
+  def update(id: Long, processor: Processor): Future[Int] = db.run(Processors.filter(_.productId === id).update(processor.copy(id)))
 
   def create() = db.run(Processors.schema.create)
 

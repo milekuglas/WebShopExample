@@ -6,13 +6,7 @@ import model.Processor
 
 
 case class GetProcessor(
-                         id: Long,
-                         name: String,
-                         manufacturer: String,
-                         price: Double,
-                         description: String,
-                         productURl: String,
-                         quantity: Int,
+                         productId: Long,
                          socket: String,
                          processorType: String,
                          cores: Int,
@@ -25,13 +19,7 @@ case class GetProcessor(
 object GetProcessor {
 
   implicit val processorReads: Writes[GetProcessor] = (
-    (JsPath \ "id").write[Long] and
-      (JsPath \ "name").write[String] and
-      (JsPath \ "manufacturer").write[String] and
-      (JsPath \ "price").write[Double] and
-      (JsPath \ "description").write[String] and
-      (JsPath \ "productURl").write[String] and
-      (JsPath \ "quantity").write[Int] and
+    (JsPath \ "productId").write[Long] and
       (JsPath \ "socket").write[String] and
       (JsPath \ "processorType").write[String] and
       (JsPath \ "cores").write[Int] and
@@ -43,13 +31,7 @@ object GetProcessor {
 
   implicit def processorToGetProcessor(processor: Processor): GetProcessor =
     new GetProcessor(
-      processor.id,
-      processor.name,
-      processor.manufacturer,
-      processor.price,
-      processor.description,
-      processor.productURl,
-      processor.quantity,
+      processor.productId,
       processor.socket,
       processor.processorType,
       processor.cores,

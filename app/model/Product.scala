@@ -1,11 +1,11 @@
 package model
 
-abstract class Product {
-  def id: Long
-  def name: String
-  def manufacturer: String
-  def price: Double
-  def description: String
-  def productURl: String
-  def quantity: Int
-}
+case class Product (
+  id: Long,
+  name: String,
+  manufacturer: String,
+  price: Double,
+  description: String,
+  productURl: String,
+  quantity: Int
+)

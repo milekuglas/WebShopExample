@@ -5,7 +5,7 @@ import play.api.BuiltInComponentsFromContext
 import play.api.db.slick.DbName
 import play.api.db.slick.SlickComponents
 import play.filters.HttpFiltersComponents
-import repository.ProcessorRepository
+import repository.{ProcessorRepository, ProductRepository}
 import router.Routes
 import service.ProcessorService
 import slick.jdbc.JdbcProfile
@@ -25,6 +25,9 @@ class ApplicationComponents(context: Context)
 
   lazy val processorRepository = new ProcessorRepository(dbConfig.db)
   processorRepository.create
+
+  lazy val productRepository = new ProductRepository(dbConfig.db)
+  productRepository.create
 
   lazy val processorService = new ProcessorService(processorRepository)
 

@@ -1,13 +1,7 @@
 package model
 
 case class Processor (
-  id: Long,
-  name: String,
-  manufacturer: String,
-  price: Double,
-  description: String,
-  productURl: String,
-  quantity: Int,
+  productId: Long,
   socket: String,
   processorType: String,
   cores: Int,
@@ -15,4 +9,4 @@ case class Processor (
   thread: Int,
   baseFrequency: Double,
   turboFrequency: Double
-)extends Product
+)

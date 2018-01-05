@@ -6,12 +6,7 @@ import model.Processor
 
 
 case class PostProcessor(
-                         name: String,
-                         manufacturer: String,
-                         price: Double,
-                         description: String,
-                         productURl: String,
-                         quantity: Int,
+                          productId: Long,
                          socket: String,
                          processorType: String,
                          cores: Int,
@@ -24,12 +19,7 @@ case class PostProcessor(
 object PostProcessor {
 
   implicit val processorReads: Reads[PostProcessor] = (
-    (JsPath \ "name").read[String] and
-      (JsPath \ "manufacturer").read[String] and
-      (JsPath \ "price").read[Double] and
-      (JsPath \ "description").read[String] and
-      (JsPath \ "productURl").read[String] and
-      (JsPath \ "quantity").read[Int] and
+    (JsPath \ "productId").read[Long] and
       (JsPath \ "socket").read[String] and
       (JsPath \ "processorType").read[String] and
       (JsPath \ "cores").read[Int] and
@@ -42,12 +32,6 @@ object PostProcessor {
   implicit def postProcessorToProcessor(newProcessor: PostProcessor): Processor =
     new Processor(
       -1,
-      newProcessor.name,
-      newProcessor.manufacturer,
-      newProcessor.price,
-      newProcessor.description,
-      newProcessor.productURl,
-      newProcessor.quantity,
       newProcessor.socket,
       newProcessor.processorType,
       newProcessor.cores,
