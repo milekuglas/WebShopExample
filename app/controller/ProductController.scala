@@ -2,12 +2,11 @@ package controller
 
 import javax.inject.{Inject, Singleton}
 
-import dto.{GetProduct, PostProduct}
 import play.api.libs.json._
-import play.api.mvc.{AbstractController, Action, ControllerComponents}
-import service.{ProcessorService, ProductService}
+import play.api.mvc.{AbstractController, ControllerComponents}
+import service.ProductService
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton()
 class ProductController @Inject()(cc: ControllerComponents, productService: ProductService)
@@ -25,15 +24,6 @@ class ProductController @Inject()(cc: ControllerComponents, productService: Prod
         Ok(Json.toJson(product))
       case None => NotFound
 
-    }
-  }
-
-  def add: Action[JsValue] = Action.async(parse.json) { request =>
-    val optionalProduct = request.body.validate[PostProduct]
-    optionalProduct match {
-      case JsSuccess(postProduct: PostProduct, _) =>
-        productService.save(postProduct) map { result => Created(Json.toJson(result)) }
-      case _: JsError => Future.successful(BadRequest)
     }
   }
 }

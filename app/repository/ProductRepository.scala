@@ -34,16 +34,10 @@ class ProductRepository @Inject() (protected val dbConfigProvider: DatabaseConfi
 
   def get(id: Long): Future[Option[Product]] = db.run(Products.filter(_.id === id).result.headOption)
 
-  def insert(processor: Product): Future[Product] = db.run((Products returning Products) += processor)
-
   def insert(products: Seq[Product]): Future[Unit] =
     db.run(Products ++= products).map(_ => ())
 
-  def delete(id: Long): Future[Int] = db.run(Products.filter(_.id === id).delete)
-
-  def update(id: Long, processor: Product): Future[Int] = db.run(Products.filter(_.id === id).update(processor.copy(id)))
-
-  def create() = db.run(Products.schema.create)
+  def create(): Future[Unit] = db.run(Products.schema.create)
 
   def count(): Future[Int] = db.run(Products.length.result)
 

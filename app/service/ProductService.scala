@@ -3,7 +3,7 @@ package service
 import javax.inject.{Inject, Singleton}
 
 import scala.concurrent.{ExecutionContext, Future}
-import dto.{GetProduct, PostProduct}
+import dto.GetProduct
 import repository.ProductRepository
 
 @Singleton()
@@ -15,9 +15,5 @@ class ProductService @Inject()(productRepository: ProductRepository)(implicit ex
 
   def get(id: Long): Future[Option[GetProduct]] = {
     productRepository.get(id).map(_.map(GetProduct.productToGetProduct))
-  }
-
-  def save(product: PostProduct): Future[GetProduct] = {
-    productRepository.insert(product).map(GetProduct.productToGetProduct)
   }
 }

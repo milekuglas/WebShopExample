@@ -1,17 +1,11 @@
 GET     /products/:id           controller.ProductController.get(id: Long)
 GET     /products               controller.ProductController.getAll
 
-GET     /processors             controller.ProcessorController.getAll
-GET     /processors/:id         controller.ProcessorController.get(id: Long)
-POST    /processors             controller.ProcessorController.add
-DELETE  /processors/:id         controller.ProcessorController.delete(id: Long)
-PUT     /processors/:id         controller.ProcessorController.update(id: Long)
-
-GET     /processors-full        controller.ProcessorFullController.getAll
-GET     /processors-full/:id    controller.ProcessorFullController.get(id: Long)
-POST    /processors-full        controller.ProcessorFullController.add
-DELETE  /processors-full/:id    controller.ProcessorFullController.delete(id: Long)
-PUT     /processors-full/:id    controller.ProcessorFullController.update(id: Long)
+GET     /processors             controller.ProcessorFullController.getAll
+GET     /processors/:id         controller.ProcessorFullController.get(id: Long)
+POST    /processors             controller.ProcessorFullController.add
+DELETE  /processors/:id         controller.ProcessorFullController.delete(id: Long)
+PUT     /processors/:id         controller.ProcessorFullController.update(id: Long)
 
 
       

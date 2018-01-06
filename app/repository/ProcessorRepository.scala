@@ -8,7 +8,6 @@ import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
-import model.ProcessorFull
 
 trait ProcessorComponent extends ProductComponent { self: HasDatabaseConfigProvider[JdbcProfile] =>
   class ProcessorTable(tag: Tag)
@@ -38,21 +37,10 @@ class ProcessorRepository @Inject() (protected val dbConfigProvider: DatabaseCon
   with HasDatabaseConfigProvider[JdbcProfile] {
 
   val Processors = TableQuery[ProcessorTable]
-  val Products = TableQuery[ProductTable]
-
-  def all(): Future[Seq[Processor]] = db.run(Processors.result)
-
-  def get(id: Long): Future[Option[Processor]] = db.run(Processors.filter(_.productId === id).result.headOption)
-
-  def insert(processor: Processor): Future[Processor] = db.run((Processors returning Processors) += processor)
 
   def insert(processors: Seq[Processor]): Future[Unit] =
     db.run(Processors ++= processors).map(_ => ())
 
-  def delete(id: Long): Future[Int] = db.run(Processors.filter(_.productId === id).delete)
-
-  def update(id: Long, processor: Processor): Future[Int] = db.run(Processors.filter(_.productId === id).update(processor.copy(id)))
-
-  def create() = db.run(Processors.schema.create)
+  def create(): Future[Unit] = db.run(Processors.schema.create)
 
 }

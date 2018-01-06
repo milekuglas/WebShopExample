@@ -4,15 +4,13 @@ import slick.jdbc.PostgresProfile.api._
 import model.{Processor, ProcessorFull}
 import javax.inject.{Inject, Singleton}
 
-import dto.GetProcessorFull
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class ProcessorFullRepository @Inject() (protected val dbConfigProvider: DatabaseConfigProvider,
-                                         processorRepository: ProcessorRepository, productRepository: ProductRepository)
+class ProcessorFullRepository @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
                                     (implicit executionContext: ExecutionContext) extends ProcessorComponent
   with HasDatabaseConfigProvider[JdbcProfile] {
 
@@ -37,7 +35,7 @@ class ProcessorFullRepository @Inject() (protected val dbConfigProvider: Databas
     case _ => None
   })
 
-  def insert(processorFull: ProcessorFull) = db.run((for {
+  def insert(processorFull: ProcessorFull): Future[ProcessorFull] = db.run((for {
     product <- (Products returning Products) += processorFull.product
     processor <- (Processors returning Processors) += processorFull.processor.copy(productId = product.id)
   } yield ProcessorFull(processor, product)).transactionally)
@@ -48,7 +46,7 @@ class ProcessorFullRepository @Inject() (protected val dbConfigProvider: Databas
   } yield rows).transactionally)
 
   def update(id: Long, processorFull: ProcessorFull): Future[Int] = db.run((for {
-    procRow <- Processors.filter(_.productId === id).update(processorFull.processor.copy(id))
-    prodRow <- Products.filter(_.id === id).update(processorFull.product.copy(id))
+    procRow <- Processors.filter(_.productId === id).update(processorFull.processor.copy(id)) if procRow == 1
+    prodRow <- Products.filter(_.id === id).update(processorFull.product.copy(id)) if prodRow == 1
   } yield math.max(procRow, prodRow)).transactionally)
 }

@@ -1,10 +1,9 @@
-import java.text.SimpleDateFormat
 import javax.inject.Inject
 
 import repository._
-import model.{ Product, Processor }
+import model.{Processor, Product}
 
-import scala.concurrent.{ Await, ExecutionContext }
+import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration.Duration
 import scala.util.Try
 
@@ -12,22 +11,22 @@ import scala.util.Try
 class InitialData @Inject() (productRepository: ProductRepository, processorRepository: ProcessorRepository)
                             (implicit executionContext: ExecutionContext) {
 
-  def insert(): Unit = {
-    val insertInitialDataFuture = for {
+  def createInsert(): Unit = {
+    val createInsertData = for {
+      _ <- productRepository.create()
+      _ <- processorRepository.create()
       count <- productRepository.count() if count == 0
       _ <- productRepository.insert(InitialData.products)
       _ <- processorRepository.insert(InitialData.processors)
     } yield ()
 
-    Try(Await.result(insertInitialDataFuture, Duration.Inf))
+    Try(Await.result(createInsertData, Duration.Inf))
   }
-  productRepository.create()
-  processorRepository.create()
-  insert()
+
+  createInsert()
 }
 
 object InitialData {
-  //private val sdf = new SimpleDateFormat("yyyy-MM-dd")
 
   def products = Seq(
     Product(1L, "Product1", "Manufacter1", 1000, "Description1", "Product1.html", 100),
