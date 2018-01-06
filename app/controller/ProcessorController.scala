@@ -2,7 +2,7 @@ package controller
 
 import javax.inject.{Inject, Singleton}
 
-import dto.PostProcessor
+import dto.{GetProcessorFull, PostProcessor}
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, Action, ControllerComponents}
 import service.ProcessorService
@@ -41,7 +41,6 @@ class ProcessorController @Inject()(cc: ControllerComponents, processorService: 
     processorService.delete(id) map {
       case x if x < 1 => NotFound
       case _ => Ok
-
     }
   }
 
