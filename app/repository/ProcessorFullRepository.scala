@@ -1,17 +1,16 @@
 package repository
 
 import slick.jdbc.PostgresProfile.api._
-import model.{Processor, ProcessorFull}
+import model.{ Processor, ProcessorFull }
 import javax.inject.{Inject, Singleton}
-
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
-
 import scala.concurrent.{ExecutionContext, Future}
+
 
 @Singleton()
 class ProcessorFullRepository @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
-                                    (implicit executionContext: ExecutionContext) extends ProcessorComponent
+                                        (implicit executionContext: ExecutionContext) extends ProcessorComponent
   with HasDatabaseConfigProvider[JdbcProfile] {
 
   private val Processors = TableQuery[ProcessorTable]
@@ -19,19 +18,19 @@ class ProcessorFullRepository @Inject() (protected val dbConfigProvider: Databas
 
   def all(): Future[Seq[ProcessorFull]] = db.run({
     for {
-      (proc, prod) <- Processors join Products on (_.productId === _.id)
-    } yield (proc, prod)
+      (processor, product) <- Processors join Products on (_.productId === _.id)
+    } yield (processor, product)
   }.result.map(_ map {
-    case (proc: Processor, prod:Product) => ProcessorFull(proc, prod)
+    case (processor: Processor, product:Product) =>ProcessorFull(processor, product)
   })
   )
 
   def get(id: Long):Future[Option[ProcessorFull]] = db.run({
     for {
-      (proc, prod) <- Processors.filter(_.productId === id) join Products on (_.productId === _.id)
-    } yield (proc, prod)
+      (processor, product) <-Processors.filter(_.productId === id) join Products on (_.productId === _.id)
+    } yield (processor, product)
   }.result.head map {
-    case (proc: Processor, prod:Product) => Some(ProcessorFull(proc, prod))
+    case (processor: Processor,product:Product) => Some(ProcessorFull(processor, product))
     case _ => None
   })
 
@@ -41,12 +40,12 @@ class ProcessorFullRepository @Inject() (protected val dbConfigProvider: Databas
   } yield ProcessorFull(processor, product)).transactionally)
 
   def delete(id: Long): Future[Int] = db.run((for {
-    _ <- Processors.filter(_.productId === id).delete
-    rows <- Products.filter(_.id === id).delete
-  } yield rows).transactionally)
+    rowsProcessor <- Processors.filter(_.productId === id).delete if rowsProcessor == 1
+    rowsProduct <- Products.filter(_.id === id).delete if rowsProduct == 1
+  } yield rowsProduct).transactionally)
 
   def update(id: Long, processorFull: ProcessorFull): Future[Int] = db.run((for {
-    procRow <- Processors.filter(_.productId === id).update(processorFull.processor.copy(id)) if procRow == 1
-    prodRow <- Products.filter(_.id === id).update(processorFull.product.copy(id)) if prodRow == 1
-  } yield math.max(procRow, prodRow)).transactionally)
+    rowsProcessor <- Processors.filter(_.productId === id).update(processorFull.processor.copy(id)) if rowsProcessor == 1
+    rowsProduct <- Products.filter(_.id === id).update(processorFull.product.copy(id)) if rowsProduct == 1
+  } yield rowsProduct).transactionally)
 }

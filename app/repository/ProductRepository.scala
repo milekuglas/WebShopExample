@@ -1,13 +1,14 @@
 package repository
 
 import slick.jdbc.PostgresProfile.api._
-import scala.concurrent.{ Future, ExecutionContext}
 import model.Product
-import play.api.db.slick.{ DatabaseConfigProvider, HasDatabaseConfigProvider }
+import javax.inject.{Inject, Singleton}
+import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.jdbc.JdbcProfile
-import javax.inject.{ Inject, Singleton }
+import scala.concurrent.{ExecutionContext, Future}
 
-trait ProductComponent { self: HasDatabaseConfigProvider[JdbcProfile] =>
+
+trait ProductComponent{ self: HasDatabaseConfigProvider[JdbcProfile] =>
   class ProductTable(tag: Tag)
     extends Table[Product](tag, "PRODUCTS") {
 
@@ -19,14 +20,15 @@ trait ProductComponent { self: HasDatabaseConfigProvider[JdbcProfile] =>
     def productURl = column[String]("productURl")
     def quantity = column[Int]("quantity")
 
-    def * = (id, name, manufacturer,price, description, productURl, quantity) <> (Product.tupled, Product.unapply)
+
+    def * = (id, name, manufacturer, price, description, productURl, quantity) <> (Product.tupled, Product.unapply)
   }
 }
 
 @Singleton()
-class ProductRepository @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)
-  extends ProductComponent
-    with HasDatabaseConfigProvider[JdbcProfile] {
+class ProductRepository @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
+                                  (implicit executionContext: ExecutionContext) extends ProductComponent
+  with HasDatabaseConfigProvider[JdbcProfile] {
 
   val Products = TableQuery[ProductTable]
 
@@ -40,5 +42,4 @@ class ProductRepository @Inject() (protected val dbConfigProvider: DatabaseConfi
   def create(): Future[Unit] = db.run(Products.schema.create)
 
   def count(): Future[Int] = db.run(Products.length.result)
-
 }
