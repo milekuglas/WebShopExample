@@ -1,10 +1,9 @@
-package controller
+package org.my.controller
 
 import javax.inject.{Inject, Singleton}
-
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, ControllerComponents}
-import service.ProductService
+import org.my.service.ProductService
 
 import scala.concurrent.ExecutionContext
 

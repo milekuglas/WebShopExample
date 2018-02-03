@@ -1,18 +1,17 @@
-package dto
+package org.my.dto
 
 import play.api.libs.json._
-import model.Product
-
+import org.my.model.Product
 
 case class PostProduct(
-                        name: String,
-                        manufacturer: String,
-                        price: Double,
-                        description: String,
-                        productURl: String,
-                        quantity: Int,
-                        categoryId: Long
-                        )
+    name: String,
+    manufacturer: String,
+    price: Double,
+    description: String,
+    productURl: String,
+    quantity: Int,
+    categoryId: Long
+)
 
 object PostProduct {
 
@@ -29,5 +28,4 @@ object PostProduct {
       postProduct.quantity,
       postProduct.categoryId
     )
-
 }

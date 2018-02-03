@@ -1,43 +1,47 @@
 package repository
 
 import slick.jdbc.PostgresProfile.api._
-import model.{ Processor, ProcessorFull }
+import model.{Category, Processor, ProcessorFull}
 import javax.inject.{Inject, Singleton}
-import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
-import slick.jdbc.JdbcProfile
+
+import play.api.db.slick.DatabaseConfigProvider
+import repository.table.{CategoryTable, ProcessorTable, ProductTable}
 import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton()
 class ProcessorFullRepository @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)
-                                        (implicit executionContext: ExecutionContext) extends ProcessorComponent
-  with HasDatabaseConfigProvider[JdbcProfile] {
+                                        (implicit executionContext: ExecutionContext) {
 
   private val Processors = TableQuery[ProcessorTable]
   private val Products = TableQuery[ProductTable]
+  private val Categories = TableQuery[CategoryTable]
+
+  val db = dbConfigProvider.get.db
 
   def all(): Future[Seq[ProcessorFull]] = db.run({
     for {
-      (processor, product) <- Processors join Products on (_.productId === _.id)
-    } yield (processor, product)
+      ((processor, product), category) <- Processors join Products on (_.productId === _.id) join Categories on (_._2.categoryId === _.id)
+    } yield (processor, product, category)
   }.result.map(_ map {
-    case (processor: Processor, product:Product) =>ProcessorFull(processor, product)
+    case (processor: Processor, product: Product, category: Category) =>ProcessorFull(processor, product, category)
   })
   )
 
   def get(id: Long):Future[Option[ProcessorFull]] = db.run({
     for {
-      (processor, product) <-Processors.filter(_.productId === id) join Products on (_.productId === _.id)
-    } yield (processor, product)
+      ((processor, product), category) <-Processors.filter(_.productId === id) join Products on (_.productId === _.id) join Categories on (_._2.categoryId === _.id)
+    } yield (processor, product, category)
   }.result.head map {
-    case (processor: Processor,product:Product) => Some(ProcessorFull(processor, product))
+    case (processor: Processor, product: Product, category: Category) => Some(ProcessorFull(processor, product, category))
     case _ => None
   })
 
   def insert(processorFull: ProcessorFull): Future[ProcessorFull] = db.run((for {
     product <- (Products returning Products) += processorFull.product
     processor <- (Processors returning Processors) += processorFull.processor.copy(productId = product.id)
-  } yield ProcessorFull(processor, product)).transactionally)
+    category <- Categories.filter(_.id === product.categoryId).result.head
+  } yield ProcessorFull(processor, product, category)).transactionally)
 
   def delete(id: Long): Future[Int] = db.run((for {
     rowsProcessor <- Processors.filter(_.productId === id).delete if rowsProcessor == 1

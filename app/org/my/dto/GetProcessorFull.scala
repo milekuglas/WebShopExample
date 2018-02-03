@@ -1,6 +1,6 @@
-package dto
+package org.my.dto
 
-import model.ProcessorFull
+import org.my.model.ProcessorFull
 import play.api.libs.json._
 
 case class GetProcessorFull(

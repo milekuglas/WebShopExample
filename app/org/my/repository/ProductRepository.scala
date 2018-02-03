@@ -1,12 +1,10 @@
-package repository
+package org.my.repository
 
 import slick.jdbc.PostgresProfile.api._
-import model.Product
+import org.my.model.Product
+import org.my.repository.table.ProductTable
 import javax.inject.{Inject, Singleton}
-
 import play.api.db.slick.DatabaseConfigProvider
-import repository.table.ProductTable
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
@@ -15,6 +13,7 @@ class ProductRepository @Inject()(
     implicit executionContext: ExecutionContext) {
 
   val Products = TableQuery[ProductTable]
+
   val db = dbConfigProvider.get.db
 
   def all(): Future[Seq[Product]] = db.run(Products.result)

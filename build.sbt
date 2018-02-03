@@ -1,5 +1,5 @@
-name := "WebShopExample1"
- 
+name := "WebShopExample"
+
 version := "1.0"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
@@ -11,7 +11,4 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick" % "3.0.0",
   "com.github.t3hnar" %% "scala-bcrypt" % "3.0" ,
   guice
-
 )
-
-      

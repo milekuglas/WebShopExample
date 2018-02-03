@@ -7,5 +7,6 @@ case class Product (
   price: Double,
   description: String,
   productURl: String,
-  quantity: Int
+  quantity: Int,
+  categoryId: Long
 )

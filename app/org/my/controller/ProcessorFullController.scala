@@ -1,28 +1,26 @@
-package controller
+package org.my.controller
 
 import javax.inject.{Inject, Singleton}
-
-import dto.PostProcessorFull
+import org.my.dto.PostProcessorFull
+import org.my.service.ProcessorFullService
 import play.api.libs.json._
 import play.api.mvc.{AbstractController, Action, ControllerComponents}
-import service.ProcessorFullService
-
 import scala.concurrent.{ExecutionContext, Future}
-
 @Singleton()
-class ProcessorFullController @Inject()(cc: ControllerComponents, processorFullService: ProcessorFullService)
-                                       (implicit executionContext: ExecutionContext)
-  extends AbstractController(cc) {
-
+class ProcessorFullController @Inject()(
+    cc: ControllerComponents,
+    processorFullService: ProcessorFullService)(
+    implicit executionContext: ExecutionContext)
+    extends AbstractController(cc) {
 
   def getAll = Action.async {
-    processorFullService.getAll map(result => Ok(Json.toJson(result)))
+    processorFullService.getAll map (result => Ok(Json.toJson(result)))
   }
 
   def get(id: Long) = Action.async {
     processorFullService.get(id) map {
       case Some(result) => Ok(Json.toJson(result))
-      case None => NotFound
+      case None         => NotFound
     }
   }
 
@@ -30,7 +28,9 @@ class ProcessorFullController @Inject()(cc: ControllerComponents, processorFullS
     val optionalProcessorFull = request.body.validate[PostProcessorFull]
     optionalProcessorFull match {
       case JsSuccess(postProcessorFull: PostProcessorFull, _) =>
-        processorFullService.save(postProcessorFull) map { result => Created(Json.toJson(result)) }
+        processorFullService.save(postProcessorFull) map { result =>
+          Created(Json.toJson(result))
+        }
       case _: JsError => Future.successful(BadRequest)
     }
   }
@@ -38,7 +38,7 @@ class ProcessorFullController @Inject()(cc: ControllerComponents, processorFullS
   def delete(id: Long) = Action.async {
     processorFullService.delete(id) map {
       case x if x < 1 => NotFound
-      case _ => Ok
+      case _          => Ok
     }
   }
 
@@ -46,10 +46,10 @@ class ProcessorFullController @Inject()(cc: ControllerComponents, processorFullS
     val optionalProcessorFull = request.body.validate[PostProcessorFull]
     optionalProcessorFull match {
       case JsSuccess(postProcessorFull: PostProcessorFull, _) =>
-        processorFullService.update(id, postProcessorFull) map { result => Ok(Json.toJson(result)) }
-      case _:JsError => Future.successful(BadRequest)
+        processorFullService.update(id, postProcessorFull) map { result =>
+          Ok(Json.toJson(result))
+        }
+      case _: JsError => Future.successful(BadRequest)
     }
   }
 }
-
-

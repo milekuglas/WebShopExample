@@ -1,19 +1,18 @@
-package dto
+package org.my.dto
 
 import play.api.libs.json._
-import model.Product
-
+import org.my.model.Product
 
 case class GetProduct(
-                       id: Long,
-                       name: String,
-                       manufacturer: String,
-                       price: Double,
-                       description: String,
-                       productURl: String,
-                       quantity: Int,
-                       categoryId: Long
-                       )
+    id: Long,
+    name: String,
+    manufacturer: String,
+    price: Double,
+    description: String,
+    productURl: String,
+    quantity: Int,
+    categoryId: Long
+)
 
 object GetProduct {
 
