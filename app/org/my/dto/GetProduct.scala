@@ -25,7 +25,7 @@ object GetProduct {
       product.manufacturer,
       product.price,
       product.description,
-      product.productURl,
+      product.productUrl,
       product.quantity,
       product.categoryId
     )

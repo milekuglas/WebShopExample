@@ -35,3 +35,5 @@ object ProductTable {
   lazy val Products = TableQuery[ProductTable]
 
 }
+
+

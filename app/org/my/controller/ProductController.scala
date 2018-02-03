@@ -25,4 +25,18 @@ class ProductController @Inject()(
 
     }
   }
+
+  def search(name: Option[String],
+             manufacturer: Option[String],
+             priceFrom: Option[Double],
+             priceTo: Option[Double],
+             description: Option[String],
+             productUrl: Option[String],
+             quantityFrom: Option[Int],
+             quantityTo: Option[Int],
+             categoryId: Option[Long]) = Action.async {
+
+    productService.search(name, manufacturer, priceFrom, priceTo, description, productUrl, quantityFrom, quantityTo, categoryId) map (result => Ok(Json.toJson(result)))
+  }
+
 }

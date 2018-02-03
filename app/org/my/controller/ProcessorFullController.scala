@@ -52,4 +52,30 @@ class ProcessorFullController @Inject()(
       case _: JsError => Future.successful(BadRequest)
     }
   }
+
+  def search(name: Option[String],
+             manufacturer: Option[String],
+             priceFrom: Option[Double],
+             priceTo: Option[Double],
+             description: Option[String],
+             productUrl: Option[String],
+             quantityFrom: Option[Int],
+             quantityTo: Option[Int],
+             categoryId: Option[Long],
+             socket: Option[String],
+             processorType: Option[String],
+             coresFrom: Option[Int],
+             coresTo: Option[Int],
+             cacheFrom: Option[Int],
+             cacheTo: Option[Int],
+             threadFrom: Option[Int],
+             threadTo: Option[Int],
+             baseFrequencyFrom: Option[Double],
+             baseFrequencyTo: Option[Double],
+             turboFrequencyFrom: Option[Double],
+             turboFrequencyTo: Option[Double]) = Action.async {
+
+    processorFullService.search(name, manufacturer, priceFrom, priceTo, description, productUrl, quantityFrom, quantityTo, categoryId,
+      socket, processorType, coresFrom, coresTo, cacheFrom, cacheTo, threadFrom, threadTo, baseFrequencyFrom, baseFrequencyTo, turboFrequencyFrom, turboFrequencyTo) map (result => Ok(Json.toJson(result)))
+  }
 }
