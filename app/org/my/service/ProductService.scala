@@ -26,6 +26,16 @@ class ProductService @Inject()(productRepository: ProductRepository)(
              quantityTo: Option[Int],
              categoryId: Option[Long]): Future[Seq[GetProduct]] = {
 
-    productRepository.search(name, manufacturer, priceFrom, priceTo, description, productUrl, quantityFrom, quantityTo, categoryId).map(_.map(GetProduct.productToGetProduct))
+    productRepository
+      .search(name,
+              manufacturer,
+              priceFrom,
+              priceTo,
+              description,
+              productUrl,
+              quantityFrom,
+              quantityTo,
+              categoryId)
+      .map(_.map(GetProduct.productToGetProduct))
   }
 }

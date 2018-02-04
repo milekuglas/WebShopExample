@@ -5,20 +5,15 @@ import scala.concurrent.{ExecutionContext, Future}
 import org.my.dto.{GetProcessorFull, PostProcessorFull}
 import org.my.repository.ProcessorFullRepository
 @Singleton()
-class ProcessorFullService @Inject()(
-    processorFullRepository: ProcessorFullRepository)(
+class ProcessorFullService @Inject()(processorFullRepository: ProcessorFullRepository)(
     implicit executionContext: ExecutionContext) {
 
   def getAll: Future[Seq[GetProcessorFull]] = {
-    processorFullRepository
-      .all()
-      .map(_.map(GetProcessorFull.processorFullToGetProcessorFull))
+    processorFullRepository.all().map(_.map(GetProcessorFull.processorFullToGetProcessorFull))
   }
 
   def get(id: Long): Future[Option[GetProcessorFull]] = {
-    processorFullRepository
-      .get(id)
-      .map(_.map(GetProcessorFull.processorFullToGetProcessorFull))
+    processorFullRepository.get(id).map(_.map(GetProcessorFull.processorFullToGetProcessorFull))
   }
 
   def save(processorFull: PostProcessorFull): Future[GetProcessorFull] = {
@@ -43,7 +38,6 @@ class ProcessorFullService @Inject()(
              productUrl: Option[String],
              quantityFrom: Option[Int],
              quantityTo: Option[Int],
-             categoryId: Option[Long],
              socket: Option[String],
              processorType: Option[String],
              coresFrom: Option[Int],
@@ -55,10 +49,35 @@ class ProcessorFullService @Inject()(
              baseFrequencyFrom: Option[Double],
              baseFrequencyTo: Option[Double],
              turboFrequencyFrom: Option[Double],
-             turboFrequencyTo: Option[Double]): Future[Seq[GetProcessorFull]] = {
+             turboFrequencyTo: Option[Double],
+             categoryId: Option[Long]): Future[Seq[GetProcessorFull]] = {
 
-    processorFullRepository.search(name, manufacturer, priceFrom, priceTo, description, productUrl, quantityFrom, quantityTo, categoryId,
-      socket, processorType, coresFrom, coresTo, cacheFrom, cacheTo, threadFrom, threadTo, baseFrequencyFrom, baseFrequencyTo, turboFrequencyFrom, turboFrequencyTo).map(_.map(GetProcessorFull.processorFullToGetProcessorFull))
+    processorFullRepository
+      .search(
+        name,
+        manufacturer,
+        priceFrom,
+        priceTo,
+        description,
+        productUrl,
+        quantityFrom,
+        quantityTo,
+        socket,
+        processorType,
+        coresFrom,
+        coresTo,
+        cacheFrom,
+        cacheTo,
+        threadFrom,
+        threadTo,
+        baseFrequencyFrom,
+        baseFrequencyTo,
+        turboFrequencyFrom,
+        turboFrequencyTo,
+        categoryId
+      )
+      .map(_.map(GetProcessorFull.processorFullToGetProcessorFull))
 
   }
+
 }

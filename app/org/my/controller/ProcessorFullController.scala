@@ -9,8 +9,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton()
 class ProcessorFullController @Inject()(
     cc: ControllerComponents,
-    processorFullService: ProcessorFullService)(
-    implicit executionContext: ExecutionContext)
+    processorFullService: ProcessorFullService)(implicit executionContext: ExecutionContext)
     extends AbstractController(cc) {
 
   def getAll = Action.async {
@@ -61,7 +60,6 @@ class ProcessorFullController @Inject()(
              productUrl: Option[String],
              quantityFrom: Option[Int],
              quantityTo: Option[Int],
-             categoryId: Option[Long],
              socket: Option[String],
              processorType: Option[String],
              coresFrom: Option[Int],
@@ -73,9 +71,31 @@ class ProcessorFullController @Inject()(
              baseFrequencyFrom: Option[Double],
              baseFrequencyTo: Option[Double],
              turboFrequencyFrom: Option[Double],
-             turboFrequencyTo: Option[Double]) = Action.async {
+             turboFrequencyTo: Option[Double],
+             categoryId: Option[Long]) = Action.async {
 
-    processorFullService.search(name, manufacturer, priceFrom, priceTo, description, productUrl, quantityFrom, quantityTo, categoryId,
-      socket, processorType, coresFrom, coresTo, cacheFrom, cacheTo, threadFrom, threadTo, baseFrequencyFrom, baseFrequencyTo, turboFrequencyFrom, turboFrequencyTo) map (result => Ok(Json.toJson(result)))
+    processorFullService.search(
+      name,
+      manufacturer,
+      priceFrom,
+      priceTo,
+      description,
+      productUrl,
+      quantityFrom,
+      quantityTo,
+      socket,
+      processorType,
+      coresFrom,
+      coresTo,
+      cacheFrom,
+      cacheTo,
+      threadFrom,
+      threadTo,
+      baseFrequencyFrom,
+      baseFrequencyTo,
+      turboFrequencyFrom,
+      turboFrequencyTo,
+      categoryId
+    ) map (result => Ok(Json.toJson(result)))
   }
 }

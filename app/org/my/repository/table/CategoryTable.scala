@@ -7,12 +7,11 @@ class CategoryTable(tag: Tag) extends Table[Category](tag, "CATEGORIES") {
 
   val Categories = TableQuery[CategoryTable]
 
-  def id = column[Long]("id", O.PrimaryKey, O.AutoInc)
-  def name = column[String]("name")
+  def id            = column[Long]("id", O.PrimaryKey, O.AutoInc)
+  def name          = column[String]("name")
   def subcategoryId = column[Option[Long]]("subcategory_id")
 
-  def subcategory =
-    foreignKey("subcategory_FK", subcategoryId, Categories)(_.id)
+  def subcategory = foreignKey("subcategory_FK", subcategoryId, Categories)(_.id)
 
   def * = (id, name, subcategoryId) <> (Category.tupled, Category.unapply)
 }

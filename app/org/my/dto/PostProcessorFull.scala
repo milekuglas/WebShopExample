@@ -12,8 +12,7 @@ object PostProcessorFull {
 
   implicit val processorFullReads = Json.reads[PostProcessorFull]
 
-  implicit def postProcessorFullToProcessor(
-      postProcessorFull: PostProcessorFull): ProcessorFull =
+  implicit def postProcessorFullToProcessor(postProcessorFull: PostProcessorFull): ProcessorFull =
     new ProcessorFull(
       postProcessorFull.processor,
       postProcessorFull.product,

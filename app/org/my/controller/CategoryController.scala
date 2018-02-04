@@ -10,8 +10,7 @@ import org.my.service.CategoryService
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class CategoryController @Inject()(cc: ControllerComponents,
-                                   categoryService: CategoryService)(
+class CategoryController @Inject()(cc: ControllerComponents, categoryService: CategoryService)(
     implicit executionContext: ExecutionContext)
     extends AbstractController(cc) {
 

@@ -3,13 +3,13 @@ package org.my.repository
 import slick.jdbc.PostgresProfile.api._
 import org.my.model.RAM
 import org.my.repository.table.RAMTable
+import org.my.search.filter.MaybeFilter
 import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class RAMRepository @Inject()(
-    protected val dbConfigProvider: DatabaseConfigProvider)(
+class RAMRepository @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(
     implicit executionContext: ExecutionContext) {
 
   val RAMs = TableQuery[RAMTable]

@@ -8,9 +8,8 @@ import org.my.service.ProductService
 import scala.concurrent.ExecutionContext
 
 @Singleton()
-class ProductController @Inject()(
-    cc: ControllerComponents,
-    productService: ProductService)(implicit executionContext: ExecutionContext)
+class ProductController @Inject()(cc: ControllerComponents, productService: ProductService)(
+    implicit executionContext: ExecutionContext)
     extends AbstractController(cc) {
 
   def getAll = Action.async {
@@ -36,7 +35,14 @@ class ProductController @Inject()(
              quantityTo: Option[Int],
              categoryId: Option[Long]) = Action.async {
 
-    productService.search(name, manufacturer, priceFrom, priceTo, description, productUrl, quantityFrom, quantityTo, categoryId) map (result => Ok(Json.toJson(result)))
+    productService.search(name,
+                          manufacturer,
+                          priceFrom,
+                          priceTo,
+                          description,
+                          productUrl,
+                          quantityFrom,
+                          quantityTo,
+                          categoryId) map (result => Ok(Json.toJson(result)))
   }
-
 }

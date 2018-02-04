@@ -3,16 +3,13 @@ package org.my.repository
 import slick.jdbc.PostgresProfile.api._
 import org.my.model.Product
 import org.my.repository.table.ProductTable
-import javax.inject.{Inject, Singleton}
-
 import org.my.search.filter.MaybeFilter
+import javax.inject.{Inject, Singleton}
 import play.api.db.slick.DatabaseConfigProvider
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class ProductRepository @Inject()(
-    protected val dbConfigProvider: DatabaseConfigProvider)(
+class ProductRepository @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(
     implicit executionContext: ExecutionContext) {
 
   val Products = TableQuery[ProductTable]
@@ -36,7 +33,16 @@ class ProductRepository @Inject()(
              quantityFrom: Option[Int],
              quantityTo: Option[Int],
              categoryId: Option[Long]): Future[Seq[Product]] =
-    db.run(find(name, manufacturer, priceFrom, priceTo, description, productUrl, quantityFrom, quantityTo, categoryId).result)
+    db.run(
+      find(name,
+           manufacturer,
+           priceFrom,
+           priceTo,
+           description,
+           productUrl,
+           quantityFrom,
+           quantityTo,
+           categoryId).result)
 
   def find(name: Option[String],
            manufacturer: Option[String],
@@ -49,15 +55,18 @@ class ProductRepository @Inject()(
            categoryId: Option[Long]) = {
 
     MaybeFilter(Products)
-      .filter(name)(value => product => product.name.toLowerCase like "%"+value.toLowerCase+"%")
-      .filter(manufacturer)(value => product => product.manufacturer.toLowerCase like "%"+value.toLowerCase+"%")
+      .filter(name)(value => product => product.name.toLowerCase like "%" + value.toLowerCase + "%")
+      .filter(manufacturer)(value =>
+        product => product.manufacturer.toLowerCase like "%" + value.toLowerCase + "%")
       .filter(priceFrom)(value => product => product.price >= value)
       .filter(priceTo)(value => product => product.price <= value)
-      .filter(description)(value => product => product.description.toLowerCase like "%"+value.toLowerCase+"%")
-      .filter(productUrl)(value => product => product.productURl.toLowerCase like "%"+value.toLowerCase+"%")
+      .filter(description)(value =>
+        product => product.description.toLowerCase like "%" + value.toLowerCase + "%")
+      .filter(productUrl)(value =>
+        product => product.productUrl.toLowerCase like "%" + value.toLowerCase + "%")
       .filter(quantityFrom)(value => product => product.quantity >= value)
       .filter(quantityTo)(value => product => product.quantity <= value)
-      .filter(categoryId)(value => product => product.categoryId === categoryId)
+      .filter(categoryId)(value => product => product.categoryId === value)
       .query
   }
 

@@ -9,12 +9,12 @@ class RAMTable(tag: Tag) extends Table[RAM](tag, "RAMS") {
 
   val Products = TableQuery[ProductTable]
 
-  def productId = column[Long]("product_id")
-  def ram_type = column[String]("ram_type")
+  def productId    = column[Long]("product_id")
+  def ram_type     = column[String]("ram_type")
   def maxFrequency = column[Double]("maxFrequency")
-  def capacity = column[Int]("capacity")
-  def voltage = column[Double]("voltage")
-  def latency = column[Int]("latency")
+  def capacity     = column[Int]("capacity")
+  def voltage      = column[Double]("voltage")
+  def latency      = column[Int]("latency")
 
   def product = foreignKey("product_FK", productId, Products)(_.id)
 

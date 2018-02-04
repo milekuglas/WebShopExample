@@ -1,14 +1,15 @@
-GET     /product/search        org.my.controller.ProductController.search(name: Option[String],manufacturer: Option[String],priceFrom: Option[Double],priceTo: Option[Double],description: Option[String],productUrl: Option[String],quantityFrom: Option[Int], quantityTo: Option[Int],categoryId: Option[Long])
+GET     /product/search        org.my.controller.ProductController.search(name: Option[String],manufacturer: Option[String],priceFrom: Option[Double],priceTo: Option[Double],description: Option[String],productUrl: Option[String],quantityFrom: Option[Int],quantityTo: Option[Int],categoryId: Option[Long])
 GET     /product/:id           org.my.controller.ProductController.get(id: Long)
 GET     /product               org.my.controller.ProductController.getAll
 
-GET     /processor/search      org.my.controller.ProcessorFullController.search(name: Option[String],manufacturer: Option[String],priceFrom: Option[Double],priceTo: Option[Double],description: Option[String],productUrl: Option[String],quantityFrom: Option[Int],quantityTo: Option[Int],categoryId: Option[Long],socket: Option[String],processorType: Option[String],coresFrom: Option[Int],coresTo: Option[Int],cacheFrom: Option[Int],cacheTo: Option[Int],threadFrom: Option[Int],threadTo: Option[Int],baseFrequencyFrom: Option[Double],baseFrequencyTo: Option[Double],turboFrequencyFrom: Option[Double],turboFrequencyTo: Option[Double])
+GET     /processor/search        org.my.controller.ProcessorFullController.search(name: Option[String],manufacturer: Option[String],priceFrom: Option[Double],priceTo: Option[Double],description: Option[String],productUrl: Option[String],quantityFrom: Option[Int],quantityTo: Option[Int],socket: Option[String],processorType: Option[String],coresFrom: Option[Int],coresTo: Option[Int],cacheFrom: Option[Int],cacheTo: Option[Int],threadFrom: Option[Int],threadTo: Option[Int],baseFrequencyFrom: Option[Double],baseFrequencyTo: Option[Double],turboFrequencyFrom: Option[Double],turboFrequencyTo: Option[Double],categoryId: Option[Long])
 GET     /processor             org.my.controller.ProcessorFullController.getAll
 GET     /processor/:id         org.my.controller.ProcessorFullController.get(id: Long)
 POST    /processor             org.my.controller.ProcessorFullController.add
 DELETE  /processor/:id         org.my.controller.ProcessorFullController.delete(id: Long)
 PUT     /processor/:id         org.my.controller.ProcessorFullController.update(id: Long)
 
+GET     /ram/search        org.my.controller.RAMFullController.search(name: Option[String],manufacturer: Option[String],priceFrom: Option[Double],priceTo: Option[Double],description: Option[String],productUrl: Option[String],quantityFrom: Option[Int],quantityTo: Option[Int],ram_type: Option[String],maxFrequencyFrom: Option[Double],maxFrequencyTo: Option[Double],capacityFrom: Option[Int],capacityTo: Option[Int],voltageFrom: Option[Double],voltageTo: Option[Double],latencyFrom: Option[Int],latencyTo: Option[Int],categoryId: Option[Long])
 GET     /ram             org.my.controller.RAMFullController.getAll
 GET     /ram/:id         org.my.controller.RAMFullController.get(id: Long)
 POST    /ram             org.my.controller.RAMFullController.add

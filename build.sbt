@@ -1,4 +1,4 @@
-name := "WebShopExample"
+name := "App"
 
 version := "1.0"
 

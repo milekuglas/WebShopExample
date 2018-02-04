@@ -8,7 +8,7 @@ case class PostProduct(
     manufacturer: String,
     price: Double,
     description: String,
-    productURl: String,
+    productUrl: String,
     quantity: Int,
     categoryId: Long
 )
@@ -24,7 +24,7 @@ object PostProduct {
       postProduct.manufacturer,
       postProduct.price,
       postProduct.description,
-      postProduct.productURl,
+      postProduct.productUrl,
       postProduct.quantity,
       postProduct.categoryId
     )

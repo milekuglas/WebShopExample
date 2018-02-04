@@ -27,4 +27,49 @@ class RAMFullService @Inject()(ramFullRepository: RAMFullRepository)(
   def update(id: Long, ramFull: PostRAMFull): Future[Int] = {
     ramFullRepository.update(id, ramFull)
   }
+
+  def search(name: Option[String],
+             manufacturer: Option[String],
+             priceFrom: Option[Double],
+             priceTo: Option[Double],
+             description: Option[String],
+             productUrl: Option[String],
+             quantityFrom: Option[Int],
+             quantityTo: Option[Int],
+             ram_type: Option[String],
+             maxFrequencyFrom: Option[Double],
+             maxFrequencyTo: Option[Double],
+             capacityFrom: Option[Int],
+             capacityTo: Option[Int],
+             voltageFrom: Option[Double],
+             voltageTo: Option[Double],
+             latencyFrom: Option[Int],
+             latencyTo: Option[Int],
+             categoryId: Option[Long]): Future[Seq[GetRAMFull]] = {
+
+    ramFullRepository
+      .search(
+        name,
+        manufacturer,
+        priceFrom,
+        priceTo,
+        description,
+        productUrl,
+        quantityFrom,
+        quantityTo,
+        ram_type,
+        maxFrequencyFrom,
+        maxFrequencyTo,
+        capacityFrom,
+        capacityTo,
+        voltageFrom,
+        voltageTo,
+        latencyFrom,
+        latencyTo,
+        categoryId
+      )
+      .map(_.map(GetRAMFull.ramFullToGetRAMFull))
+
+  }
+
 }

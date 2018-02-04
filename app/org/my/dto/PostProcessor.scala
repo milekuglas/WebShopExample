@@ -17,8 +17,7 @@ object PostProcessor {
 
   implicit val processorReads = Json.reads[PostProcessor]
 
-  implicit def postProcessorToProcessor(
-      postProcessor: PostProcessor): Processor =
+  implicit def postProcessorToProcessor(postProcessor: PostProcessor): Processor =
     new Processor(
       -1,
       postProcessor.socket,

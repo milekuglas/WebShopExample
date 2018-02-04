@@ -13,8 +13,7 @@ object GetProcessorFull {
 
   implicit val processorFullWrites = Json.writes[GetProcessorFull]
 
-  implicit def processorFullToGetProcessorFull(
-      processorFull: ProcessorFull): GetProcessorFull =
+  implicit def processorFullToGetProcessorFull(processorFull: ProcessorFull): GetProcessorFull =
     new GetProcessorFull(
       processorFull.processor,
       processorFull.product,

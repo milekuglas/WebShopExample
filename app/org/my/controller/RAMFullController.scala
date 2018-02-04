@@ -7,9 +7,8 @@ import play.api.libs.json._
 import play.api.mvc.{AbstractController, Action, ControllerComponents}
 import scala.concurrent.{ExecutionContext, Future}
 @Singleton()
-class RAMFullController @Inject()(
-    cc: ControllerComponents,
-    ramFullService: RAMFullService)(implicit executionContext: ExecutionContext)
+class RAMFullController @Inject()(cc: ControllerComponents, ramFullService: RAMFullService)(
+    implicit executionContext: ExecutionContext)
     extends AbstractController(cc) {
 
   def getAll = Action.async {
@@ -50,5 +49,46 @@ class RAMFullController @Inject()(
         }
       case _: JsError => Future.successful(BadRequest)
     }
+  }
+
+  def search(name: Option[String],
+             manufacturer: Option[String],
+             priceFrom: Option[Double],
+             priceTo: Option[Double],
+             description: Option[String],
+             productUrl: Option[String],
+             quantityFrom: Option[Int],
+             quantityTo: Option[Int],
+             ram_type: Option[String],
+             maxFrequencyFrom: Option[Double],
+             maxFrequencyTo: Option[Double],
+             capacityFrom: Option[Int],
+             capacityTo: Option[Int],
+             voltageFrom: Option[Double],
+             voltageTo: Option[Double],
+             latencyFrom: Option[Int],
+             latencyTo: Option[Int],
+             categoryId: Option[Long]) = Action.async {
+
+    ramFullService.search(
+      name,
+      manufacturer,
+      priceFrom,
+      priceTo,
+      description,
+      productUrl,
+      quantityFrom,
+      quantityTo,
+      ram_type,
+      maxFrequencyFrom,
+      maxFrequencyTo,
+      capacityFrom,
+      capacityTo,
+      voltageFrom,
+      voltageTo,
+      latencyFrom,
+      latencyTo,
+      categoryId
+    ) map (result => Ok(Json.toJson(result)))
   }
 }

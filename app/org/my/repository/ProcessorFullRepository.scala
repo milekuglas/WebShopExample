@@ -1,22 +1,19 @@
 package org.my.repository
 
 import slick.jdbc.PostgresProfile.api._
-import org.my.model.{Category, Processor, ProcessorFull, Product}
+import org.my.model.{Category, Processor, ProcessorFull}
 import javax.inject.{Inject, Singleton}
-
+import org.my.search.filter.MaybeFilter
 import play.api.db.slick.DatabaseConfigProvider
 import org.my.repository.table.{CategoryTable, ProcessorTable, ProductTable}
-import org.my.search.filter.MaybeFilter
-
 import scala.concurrent.{ExecutionContext, Future}
 @Singleton()
 class ProcessorFullRepository @Inject()(
     protected val dbConfigProvider: DatabaseConfigProvider,
-    productRepository: ProductRepository)(
-    implicit executionContext: ExecutionContext) {
+    productRepository: ProductRepository)(implicit executionContext: ExecutionContext) {
 
   private val Processors = TableQuery[ProcessorTable]
-  private val Products = TableQuery[ProductTable]
+  private val Products   = TableQuery[ProductTable]
   private val Categories = TableQuery[CategoryTable]
 
   val db = dbConfigProvider.get.db
@@ -34,8 +31,8 @@ class ProcessorFullRepository @Inject()(
   def get(id: Long): Future[Option[ProcessorFull]] =
     db.run({
       for {
-        ((processor, product), category) <- Processors.filter(
-          _.productId === id) join Products on (_.productId === _.id) join Categories on (_._2.categoryId === _.id)
+        ((processor, product), category) <- Processors
+          .filter(_.productId === id) join Products on (_.productId === _.id) join Categories on (_._2.categoryId === _.id)
       } yield (processor, product, category)
     }.result.head map {
       case (processor: Processor, product: Product, category: Category) =>
@@ -46,16 +43,15 @@ class ProcessorFullRepository @Inject()(
   def insert(processorFull: ProcessorFull): Future[ProcessorFull] =
     db.run((for {
       product <- (Products returning Products) += processorFull.product
-      processor <- (Processors returning Processors) += processorFull.processor
-        .copy(productId = product.id)
+      processor <- (Processors returning Processors) += processorFull.processor.copy(
+        productId = product.id)
       category <- Categories.filter(_.id === product.categoryId).result.head
     } yield ProcessorFull(processor, product, category)).transactionally)
 
   def delete(id: Long): Future[Int] =
     db.run((for {
-      rowsProcessor <- Processors.filter(_.productId === id).delete
-      if rowsProcessor == 1
-      rowsProduct <- Products.filter(_.id === id).delete if rowsProduct == 1
+      rowsProcessor <- Processors.filter(_.productId === id).delete if rowsProcessor == 1
+      rowsProduct   <- Products.filter(_.id === id).delete if rowsProduct == 1
     } yield rowsProduct).transactionally)
 
   def update(id: Long, processorFull: ProcessorFull): Future[Int] =
@@ -63,9 +59,8 @@ class ProcessorFullRepository @Inject()(
       rowsProcessor <- Processors
         .filter(_.productId === id)
         .update(processorFull.processor.copy(id)) if rowsProcessor == 1
-      rowsProduct <- Products
-        .filter(_.id === id)
-        .update(processorFull.product.copy(id)) if rowsProduct == 1
+      rowsProduct <- Products.filter(_.id === id).update(processorFull.product.copy(id))
+      if rowsProduct == 1
     } yield rowsProduct).transactionally)
 
   def search(name: Option[String],
@@ -76,7 +71,6 @@ class ProcessorFullRepository @Inject()(
              productUrl: Option[String],
              quantityFrom: Option[Int],
              quantityTo: Option[Int],
-             categoryId: Option[Long],
              socket: Option[String],
              processorType: Option[String],
              coresFrom: Option[Int],
@@ -88,22 +82,22 @@ class ProcessorFullRepository @Inject()(
              baseFrequencyFrom: Option[Double],
              baseFrequencyTo: Option[Double],
              turboFrequencyFrom: Option[Double],
-             turboFrequencyTo: Option[Double]): Future[Seq[ProcessorFull]] = {
+             turboFrequencyTo: Option[Double],
+             categoryId: Option[Long]): Future[Seq[ProcessorFull]] = {
 
     db.run((for {
-      ((processor, product), category) <- find(
-        socket,
-        processorType,
-        coresFrom,
-        coresTo,
-        cacheFrom,
-        cacheTo,
-        threadFrom,
-        threadTo,
-        baseFrequencyFrom,
-        baseFrequencyTo,
-        turboFrequencyFrom,
-        turboFrequencyTo) join productRepository.find(
+      ((processor, product), category) <- find(socket,
+                                               processorType,
+                                               coresFrom,
+                                               coresTo,
+                                               cacheFrom,
+                                               cacheTo,
+                                               threadFrom,
+                                               threadTo,
+                                               baseFrequencyFrom,
+                                               baseFrequencyTo,
+                                               turboFrequencyFrom,
+                                               turboFrequencyTo) join productRepository.find(
         name,
         manufacturer,
         priceFrom,
@@ -119,40 +113,36 @@ class ProcessorFullRepository @Inject()(
     }))
   }
 
-  def find(socket: Option[String],
-           processorType: Option[String],
-           coresFrom: Option[Int],
-           coresTo: Option[Int],
-           cacheFrom: Option[Int],
-           cacheTo: Option[Int],
-           threadFrom: Option[Int],
-           threadTo: Option[Int],
-           baseFrequencyFrom: Option[Double],
-           baseFrequencyTo: Option[Double],
-           turboFrequencyFrom: Option[Double],
-           turboFrequencyTo: Option[Double]) = {
+  def find(
+      socket: Option[String],
+      processorType: Option[String],
+      coresFrom: Option[Int],
+      coresTo: Option[Int],
+      cacheFrom: Option[Int],
+      cacheTo: Option[Int],
+      threadFrom: Option[Int],
+      threadTo: Option[Int],
+      baseFrequencyFrom: Option[Double],
+      baseFrequencyTo: Option[Double],
+      turboFrequencyFrom: Option[Double],
+      turboFrequencyTo: Option[Double],
+  ) = {
 
     MaybeFilter(Processors)
       .filter(socket)(value =>
-        product =>
-          product.socket.toLowerCase like "%" + value.toLowerCase + "%")
+        processor => processor.socket.toLowerCase like "%" + value.toLowerCase + "%")
       .filter(processorType)(value =>
-        product =>
-          product.processorType.toLowerCase like "%" + value.toLowerCase + "%")
-      .filter(coresFrom)(value => product => product.cores >= value)
-      .filter(coresTo)(value => product => product.cores <= value)
-      .filter(cacheFrom)(value => product => product.cache >= value)
-      .filter(cacheTo)(value => product => product.cache <= value)
-      .filter(threadFrom)(value => product => product.thread >= value)
-      .filter(threadTo)(value => product => product.thread <= value)
-      .filter(baseFrequencyFrom)(value =>
-        product => product.baseFrequency >= value)
-      .filter(baseFrequencyTo)(value =>
-        product => product.baseFrequency <= value)
-      .filter(turboFrequencyFrom)(value =>
-        product => product.turboFrequency >= value)
-      .filter(turboFrequencyTo)(value =>
-        product => product.turboFrequency <= value)
+        processor => processor.processorType.toLowerCase like "%" + value.toLowerCase + "%")
+      .filter(coresFrom)(value => processor => processor.cores >= value)
+      .filter(coresTo)(value => processor => processor.cores <= value)
+      .filter(cacheFrom)(value => processor => processor.cache >= value)
+      .filter(cacheTo)(value => processor => processor.cache <= value)
+      .filter(threadFrom)(value => processor => processor.thread >= value)
+      .filter(threadTo)(value => processor => processor.thread <= value)
+      .filter(baseFrequencyFrom)(value => processor => processor.baseFrequency >= value)
+      .filter(baseFrequencyTo)(value => processor => processor.baseFrequency <= value)
+      .filter(turboFrequencyFrom)(value => processor => processor.turboFrequency >= value)
+      .filter(turboFrequencyTo)(value => processor => processor.turboFrequency <= value)
       .query
   }
 }

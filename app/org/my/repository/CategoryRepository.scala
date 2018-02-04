@@ -10,8 +10,7 @@ import org.my.repository.table.CategoryTable
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class CategoryRepository @Inject()(
-    protected val dbConfigProvider: DatabaseConfigProvider)(
+class CategoryRepository @Inject()(protected val dbConfigProvider: DatabaseConfigProvider)(
     implicit executionContext: ExecutionContext) {
 
   val Categories = TableQuery[CategoryTable]

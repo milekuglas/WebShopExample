@@ -7,11 +7,11 @@ import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration.Duration
 import scala.util.Try
 
-class InitialData @Inject()(productRepository: ProductRepository,
-                            processorRepository: ProcessorRepository,
-                            ramRepository: RAMRepository,
-                            categoryRepository: CategoryRepository)(
-    implicit executionContext: ExecutionContext) {
+class InitialData @Inject()(
+    productRepository: ProductRepository,
+    processorRepository: ProcessorRepository,
+    ramRepository: RAMRepository,
+    categoryRepository: CategoryRepository)(implicit executionContext: ExecutionContext) {
 
   def createDatabase(): Unit = {
     val create = for {
@@ -23,7 +23,7 @@ class InitialData @Inject()(productRepository: ProductRepository,
 
     val insert = for {
       count <- categoryRepository.count() if count == 0
-      _ <- categoryRepository.insert(InitialData.categories)
+      _     <- categoryRepository.insert(InitialData.categories)
     } yield ()
 
     Try(Await.result(create, Duration.Inf))

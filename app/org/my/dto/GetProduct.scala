@@ -9,7 +9,7 @@ case class GetProduct(
     manufacturer: String,
     price: Double,
     description: String,
-    productURl: String,
+    productUrl: String,
     quantity: Int,
     categoryId: Long
 )
