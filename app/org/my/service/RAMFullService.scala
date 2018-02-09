@@ -28,7 +28,9 @@ class RAMFullService @Inject()(ramFullRepository: RAMFullRepository)(
     ramFullRepository.update(id, ramFull)
   }
 
-  def search(name: Option[String],
+  def search(page: Int,
+             size: Int,
+             name: Option[String],
              manufacturer: Option[String],
              priceFrom: Option[Double],
              priceTo: Option[Double],
@@ -49,6 +51,8 @@ class RAMFullService @Inject()(ramFullRepository: RAMFullRepository)(
 
     ramFullRepository
       .search(
+        page,
+        size,
         name,
         manufacturer,
         priceFrom,

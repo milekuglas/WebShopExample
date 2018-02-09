@@ -24,7 +24,9 @@ class ProductRepository @Inject()(protected val dbConfigProvider: DatabaseConfig
   def insert(products: Seq[Product]): Future[Unit] =
     db.run(Products ++= products).map(_ => ())
 
-  def search(name: Option[String],
+  def search(page: Int,
+             size: Int,
+             name: Option[String],
              manufacturer: Option[String],
              priceFrom: Option[Double],
              priceTo: Option[Double],
@@ -42,7 +44,7 @@ class ProductRepository @Inject()(protected val dbConfigProvider: DatabaseConfig
            productUrl,
            quantityFrom,
            quantityTo,
-           categoryId).result)
+           categoryId).drop((page - 1) * size).take(size).result)
 
   def find(name: Option[String],
            manufacturer: Option[String],
@@ -66,7 +68,7 @@ class ProductRepository @Inject()(protected val dbConfigProvider: DatabaseConfig
         product => product.productUrl.toLowerCase like "%" + value.toLowerCase + "%")
       .filter(quantityFrom)(value => product => product.quantity >= value)
       .filter(quantityTo)(value => product => product.quantity <= value)
-      .filter(categoryId)(value => product => product.categoryId === value)
+      .filter(categoryId)(value => product => product.categoryId === categoryId)
       .query
   }
 

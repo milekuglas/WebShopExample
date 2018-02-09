@@ -53,4 +53,8 @@ class CategoryController @Inject()(cc: ControllerComponents, categoryService: Ca
       case _: JsError => Future.successful(BadRequest)
     }
   }
+
+  def getAllSubcategories(id: Long) = Action.async {
+    categoryService.getAllSubcategories(id) map (result => Ok(Json.toJson(result)))
+  }
 }

@@ -6,7 +6,7 @@ import org.my.model.Category
 case class GetCategory(
     id: Long,
     name: String,
-    subcategoryId: Option[Long]
+    superCategoryId: Option[Long]
 )
 
 object GetCategory {
@@ -17,6 +17,6 @@ object GetCategory {
     new GetCategory(
       category.id,
       category.name,
-      category.subcategoryId
+      category.superCategoryId
     )
 }

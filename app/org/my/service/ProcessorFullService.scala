@@ -30,7 +30,9 @@ class ProcessorFullService @Inject()(processorFullRepository: ProcessorFullRepos
     processorFullRepository.update(id, processorFull)
   }
 
-  def search(name: Option[String],
+  def search(page: Int,
+             size: Int,
+             name: Option[String],
              manufacturer: Option[String],
              priceFrom: Option[Double],
              priceTo: Option[Double],
@@ -54,6 +56,8 @@ class ProcessorFullService @Inject()(processorFullRepository: ProcessorFullRepos
 
     processorFullRepository
       .search(
+        page,
+        size,
         name,
         manufacturer,
         priceFrom,

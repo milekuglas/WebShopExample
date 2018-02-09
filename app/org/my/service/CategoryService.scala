@@ -31,4 +31,8 @@ class CategoryService @Inject()(categoryRepository: CategoryRepository)(
   def update(id: Long, processorFull: PostCategory): Future[Int] = {
     categoryRepository.update(id, processorFull)
   }
+
+  def getAllSubcategories(id: Long): Future[Seq[GetCategory]] = {
+    categoryRepository.getAllSubcategories(id).map(_.map(GetCategory.categoryToGetCategory))
+  }
 }

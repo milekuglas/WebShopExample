@@ -11,10 +11,6 @@ class RAMFullController @Inject()(cc: ControllerComponents, ramFullService: RAMF
     implicit executionContext: ExecutionContext)
     extends AbstractController(cc) {
 
-  def getAll = Action.async {
-    ramFullService.getAll map (result => Ok(Json.toJson(result)))
-  }
-
   def get(id: Long) = Action.async {
     ramFullService.get(id) map {
       case Some(result) => Ok(Json.toJson(result))
@@ -51,7 +47,9 @@ class RAMFullController @Inject()(cc: ControllerComponents, ramFullService: RAMF
     }
   }
 
-  def search(name: Option[String],
+  def getAll(page: Int,
+             size: Int,
+             name: Option[String],
              manufacturer: Option[String],
              priceFrom: Option[Double],
              priceTo: Option[Double],
@@ -71,6 +69,8 @@ class RAMFullController @Inject()(cc: ControllerComponents, ramFullService: RAMF
              categoryId: Option[Long]) = Action.async {
 
     ramFullService.search(
+      page,
+      size,
       name,
       manufacturer,
       priceFrom,

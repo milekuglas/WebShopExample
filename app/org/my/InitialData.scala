@@ -11,14 +11,27 @@ class InitialData @Inject()(
     productRepository: ProductRepository,
     processorRepository: ProcessorRepository,
     ramRepository: RAMRepository,
-    categoryRepository: CategoryRepository)(implicit executionContext: ExecutionContext) {
+    categoryRepository: CategoryRepository,
+    orderItemRepository: OrderItemRepository,
+    shoppingCartRepository: ShoppingCartRepository,
+    userRepository: UserRepository,
+    orderRepository: OrderRepository)(implicit executionContext: ExecutionContext) {
 
   def createDatabase(): Unit = {
     val create = for {
       _ <- categoryRepository.create()
       _ <- productRepository.create()
       _ <- processorRepository.create()
+      _ <- userRepository.create()
+      _ <- orderRepository.create()
+      _ <- shoppingCartRepository.create()
+      _ <- orderItemRepository.create()
       _ <- ramRepository.create()
+      _ <- userRepository.create()
+      _ <- orderRepository.create()
+      _ <- shoppingCartRepository.create()
+      _ <- orderItemRepository.create()
+
     } yield ()
 
     val insert = for {
@@ -26,8 +39,16 @@ class InitialData @Inject()(
       _     <- categoryRepository.insert(InitialData.categories)
     } yield ()
 
+    val insertData = for {
+      _ <- userRepository.insert(User(1, "a", "a", "a", "a", "a", 100, "a"))
+      _ <- userRepository.insert(User(2, "a", "a", "a", "a", "a", 100, "a"))
+      _ <- shoppingCartRepository.insert(ShoppingCart(1, 1))
+      _ <- shoppingCartRepository.insert(ShoppingCart(2, 2))
+    } yield ()
+
     Try(Await.result(create, Duration.Inf))
     Try(Await.result(insert, Duration.Inf))
+    Try(Await.result(insertData, Duration.Inf))
   }
 
   createDatabase()

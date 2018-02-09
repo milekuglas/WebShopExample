@@ -12,10 +12,6 @@ class ProductController @Inject()(cc: ControllerComponents, productService: Prod
     implicit executionContext: ExecutionContext)
     extends AbstractController(cc) {
 
-  def getAll = Action.async {
-    productService.getAll map (result => Ok(Json.toJson(result)))
-  }
-
   def get(id: Long) = Action.async {
     productService.get(id) map {
       case Some(result) =>
@@ -25,7 +21,9 @@ class ProductController @Inject()(cc: ControllerComponents, productService: Prod
     }
   }
 
-  def search(name: Option[String],
+  def getAll(page: Int,
+             size: Int,
+             name: Option[String],
              manufacturer: Option[String],
              priceFrom: Option[Double],
              priceTo: Option[Double],
@@ -35,7 +33,9 @@ class ProductController @Inject()(cc: ControllerComponents, productService: Prod
              quantityTo: Option[Int],
              categoryId: Option[Long]) = Action.async {
 
-    productService.search(name,
+    productService.search(page,
+                          size,
+                          name,
                           manufacturer,
                           priceFrom,
                           priceTo,

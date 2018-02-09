@@ -5,7 +5,7 @@ import org.my.model.Category
 
 case class PostCategory(
     name: String,
-    subcategoryId: Option[Long]
+    superCategoryId: Option[Long]
 )
 
 object PostCategory {
@@ -16,7 +16,7 @@ object PostCategory {
     new Category(
       -1,
       postCategory.name,
-      postCategory.subcategoryId
+      postCategory.superCategoryId
     )
 
 }

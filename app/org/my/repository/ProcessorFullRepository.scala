@@ -63,7 +63,9 @@ class ProcessorFullRepository @Inject()(
       if rowsProduct == 1
     } yield rowsProduct).transactionally)
 
-  def search(name: Option[String],
+  def search(page: Int,
+             size: Int,
+             name: Option[String],
              manufacturer: Option[String],
              priceFrom: Option[Double],
              priceTo: Option[Double],
@@ -85,32 +87,37 @@ class ProcessorFullRepository @Inject()(
              turboFrequencyTo: Option[Double],
              categoryId: Option[Long]): Future[Seq[ProcessorFull]] = {
 
-    db.run((for {
-      ((processor, product), category) <- find(socket,
-                                               processorType,
-                                               coresFrom,
-                                               coresTo,
-                                               cacheFrom,
-                                               cacheTo,
-                                               threadFrom,
-                                               threadTo,
-                                               baseFrequencyFrom,
-                                               baseFrequencyTo,
-                                               turboFrequencyFrom,
-                                               turboFrequencyTo) join productRepository.find(
-        name,
-        manufacturer,
-        priceFrom,
-        priceTo,
-        description,
-        productUrl,
-        quantityFrom,
-        quantityTo,
-        categoryId) on (_.productId === _.id) join Categories on (_._2.categoryId === _.id)
-    } yield (processor, product, category)).result.map(_ map {
-      case (processor: Processor, product: Product, category: Category) =>
-        ProcessorFull(processor, product, category)
-    }))
+    db.run(
+      (for {
+        ((processor, product), category) <- find(socket,
+                                                 processorType,
+                                                 coresFrom,
+                                                 coresTo,
+                                                 cacheFrom,
+                                                 cacheTo,
+                                                 threadFrom,
+                                                 threadTo,
+                                                 baseFrequencyFrom,
+                                                 baseFrequencyTo,
+                                                 turboFrequencyFrom,
+                                                 turboFrequencyTo) join productRepository.find(
+          name,
+          manufacturer,
+          priceFrom,
+          priceTo,
+          description,
+          productUrl,
+          quantityFrom,
+          quantityTo,
+          categoryId) on (_.productId === _.id) join Categories on (_._2.categoryId === _.id)
+      } yield (processor, product, category))
+        .drop((page - 1) * size)
+        .take(size)
+        .result
+        .map(_ map {
+          case (processor: Processor, product: Product, category: Category) =>
+            ProcessorFull(processor, product, category)
+        }))
   }
 
   def find(

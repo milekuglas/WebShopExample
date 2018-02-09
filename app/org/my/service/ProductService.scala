@@ -8,15 +8,13 @@ import org.my.repository.ProductRepository
 class ProductService @Inject()(productRepository: ProductRepository)(
     implicit executionContext: ExecutionContext) {
 
-  def getAll: Future[Seq[GetProduct]] = {
-    productRepository.all().map(_.map(GetProduct.productToGetProduct))
-  }
-
   def get(id: Long): Future[Option[GetProduct]] = {
     productRepository.get(id).map(_.map(GetProduct.productToGetProduct))
   }
 
-  def search(name: Option[String],
+  def search(page: Int,
+             size: Int,
+             name: Option[String],
              manufacturer: Option[String],
              priceFrom: Option[Double],
              priceTo: Option[Double],
@@ -27,7 +25,9 @@ class ProductService @Inject()(productRepository: ProductRepository)(
              categoryId: Option[Long]): Future[Seq[GetProduct]] = {
 
     productRepository
-      .search(name,
+      .search(page,
+              size,
+              name,
               manufacturer,
               priceFrom,
               priceTo,

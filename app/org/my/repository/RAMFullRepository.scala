@@ -58,7 +58,9 @@ class RAMFullRepository @Inject()(
       if rowsProduct == 1
     } yield rowsProduct).transactionally)
 
-  def search(name: Option[String],
+  def search(page: Int,
+             size: Int,
+             name: Option[String],
              manufacturer: Option[String],
              priceFrom: Option[Double],
              priceTo: Option[Double],
@@ -77,29 +79,34 @@ class RAMFullRepository @Inject()(
              latencyTo: Option[Int],
              categoryId: Option[Long]): Future[Seq[RAMFull]] = {
 
-    db.run((for {
-      ((ram, product), category) <- find(ram_type,
-                                         maxFrequencyFrom,
-                                         maxFrequencyTo,
-                                         capacityFrom,
-                                         capacityTo,
-                                         voltageFrom,
-                                         voltageTo,
-                                         latencyFrom,
-                                         latencyTo) join productRepository.find(
-        name,
-        manufacturer,
-        priceFrom,
-        priceTo,
-        description,
-        productUrl,
-        quantityFrom,
-        quantityTo,
-        categoryId) on (_.productId === _.id) join Categories on (_._2.categoryId === _.id)
-    } yield (ram, product, category)).result.map(_ map {
-      case (ram: RAM, product: Product, category: Category) =>
-        RAMFull(ram, product, category)
-    }))
+    db.run(
+      (for {
+        ((ram, product), category) <- find(ram_type,
+                                           maxFrequencyFrom,
+                                           maxFrequencyTo,
+                                           capacityFrom,
+                                           capacityTo,
+                                           voltageFrom,
+                                           voltageTo,
+                                           latencyFrom,
+                                           latencyTo) join productRepository.find(
+          name,
+          manufacturer,
+          priceFrom,
+          priceTo,
+          description,
+          productUrl,
+          quantityFrom,
+          quantityTo,
+          categoryId) on (_.productId === _.id) join Categories on (_._2.categoryId === _.id)
+      } yield (ram, product, category))
+        .drop((page - 1) * size)
+        .take(size)
+        .result
+        .map(_ map {
+          case (ram: RAM, product: Product, category: Category) =>
+            RAMFull(ram, product, category)
+        }))
   }
 
   def find(

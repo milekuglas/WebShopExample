@@ -12,10 +12,6 @@ class ProcessorFullController @Inject()(
     processorFullService: ProcessorFullService)(implicit executionContext: ExecutionContext)
     extends AbstractController(cc) {
 
-  def getAll = Action.async {
-    processorFullService.getAll map (result => Ok(Json.toJson(result)))
-  }
-
   def get(id: Long) = Action.async {
     processorFullService.get(id) map {
       case Some(result) => Ok(Json.toJson(result))
@@ -52,7 +48,9 @@ class ProcessorFullController @Inject()(
     }
   }
 
-  def search(name: Option[String],
+  def getAll(page: Int,
+             size: Int,
+             name: Option[String],
              manufacturer: Option[String],
              priceFrom: Option[Double],
              priceTo: Option[Double],
@@ -75,6 +73,8 @@ class ProcessorFullController @Inject()(
              categoryId: Option[Long]) = Action.async {
 
     processorFullService.search(
+      page,
+      size,
       name,
       manufacturer,
       priceFrom,

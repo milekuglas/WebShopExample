@@ -36,5 +36,8 @@ class CategoryRepository @Inject()(protected val dbConfigProvider: DatabaseConfi
   def update(id: Long, category: Category): Future[Int] =
     db.run(Categories.filter(_.id === id).update(category.copy(id)))
 
+  def getAllSubcategories(id: Long): Future[Seq[Category]] =
+    db.run(Categories.filter(_.superCategoryId === id).result)
+
   def count(): Future[Int] = db.run(Categories.length.result)
 }
