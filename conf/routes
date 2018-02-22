@@ -13,6 +13,11 @@ POST    /ram             org.my.controller.RAMFullController.add
 DELETE  /ram/:id         org.my.controller.RAMFullController.delete(id: Long)
 PUT     /ram/:id         org.my.controller.RAMFullController.update(id: Long)
 
+
+
+
+
+
 GET     /category               org.my.controller.CategoryController.getAll
 GET     /category/:id           org.my.controller.CategoryController.get(id: Long)
 GET     /category/:id/subcategory           org.my.controller.CategoryController.getAllSubcategories(id: Long)
