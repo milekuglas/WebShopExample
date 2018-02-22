@@ -12,3 +12,4 @@ libraryDependencies ++= Seq(
   "com.github.t3hnar" %% "scala-bcrypt" % "3.0" ,
   guice
 )
+
